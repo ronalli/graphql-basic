@@ -8,11 +8,7 @@ const users = [{ id: 32423435, username: 'Bob', age: 28 }];
 
 const app = express();
 
-app.use(
-  cors({
-    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
-  })
-);
+app.use(cors());
 
 const createUserBase = (input) => {
   const id = Date.now();
