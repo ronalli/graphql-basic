@@ -1,24 +1,39 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import './App.css';
+import { CREATE_USER } from './mutation/user';
 import { GET_ALL_USERS } from './query/user';
 
 const App = () => {
-  const { data, loading, error } = useQuery(GET_ALL_USERS);
-  // const {} = useMutation();
+  const { data, loading, error, refetch } = useQuery(GET_ALL_USERS);
+  const [newUser] = useMutation(CREATE_USER);
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
-  const [userAge, setUserAge] = useState('');
+  const [age, setAge] = useState('');
 
   useEffect(() => {
     if (!loading) setUsers(data.getAllUsers);
   }, [data]);
 
-  const createUser = () => {
-    const user = {
-      username,
-      age: userAge,
-    };
+  const addUser = (e) => {
+    e.preventDefault();
+    newUser({
+      variables: {
+        input: {
+          username,
+          age,
+        },
+      },
+    })
+      .then(({ data }) => console.log('Successfully', data))
+      .catch((error) => console.log(error));
+    setUsername('');
+    setAge('');
+  };
+
+  const getAll = (e) => {
+    e.preventDefault();
+    refetch();
   };
 
   if (loading) return <h2>Loading....</h2>;
@@ -35,12 +50,12 @@ const App = () => {
         <input
           type='number'
           placeholder='Введите возраст...'
-          value={userAge}
-          onChange={(e) => setUserAge(e.target.value)}
+          value={age}
+          onChange={(e) => setAge(+e.target.value)}
         />
         <div className='btns'>
-          <button onClick={createUser}>Создать</button>
-          <button>Получить</button>
+          <button onClick={addUser}>Создать</button>
+          <button onClick={getAll}>Получить</button>
         </div>
       </form>
       <div>
