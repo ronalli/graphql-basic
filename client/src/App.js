@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 import { CREATE_USER } from './mutation/user';
 import { GET_ALL_USERS, GET_USER } from './query/user';
@@ -83,11 +84,11 @@ const App = () => {
           </button>
         </div>
       </form>
-      <div className=''>
+      <div className='flex flex-col'>
         {users.map((user, idx) => (
-          <p key={user.id}>
+          <Link to={`/user/${user.id}`} key={user.id}>
             {idx + 1} - {user.username} - {user.age}
-          </p>
+          </Link>
         ))}
       </div>
     </div>

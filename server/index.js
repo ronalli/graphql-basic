@@ -22,7 +22,7 @@ const root = {
   getAllUsers: () => {
     return users;
   },
-  getUsers: ({ id }) => {
+  getUser: ({ id }) => {
     return users.find((user) => user.id === +id);
   },
   createUser: ({ input }) => {
