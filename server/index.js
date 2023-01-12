@@ -1,33 +1,36 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const cors = require('cors');
 const schema = require('./Schema/schema');
+const User = require('./models/user');
 
-const users = [{ id: 32423435, username: 'Bob', age: 28 }];
+const PORT = 4000;
+const URL =
+  'mongodb+srv://ronalli:W4H3n5PshoODuFsP@cluster0.yrtohnv.mongodb.net/graphql';
 
 const app = express();
-
+app.use(express.json());
 app.use(cors());
 
-const createUserBase = (input) => {
-  const id = Date.now();
-  return {
-    id,
-    ...input,
-  };
-};
+mongoose
+  .connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error(`DB connection error: ${err}`));
 
 const root = {
-  getAllUsers: () => {
+  getAllUsers: async () => {
+    const users = await User.find();
     return users;
   },
-  getUser: ({ id }) => {
-    return users.find((user) => user.id === +id);
+  getUser: async ({ id }) => {
+    const user = await User.findById(id);
+    return user;
   },
   createUser: ({ input }) => {
-    const user = createUserBase(input);
-    users.push(user);
+    const user = new User(input);
+    user.save();
     return user;
   },
 };
@@ -41,4 +44,6 @@ app.use(
   })
 );
 
-app.listen(4000, () => console.log('Server started'));
+app.listen(PORT, (err) => {
+  err ? console.log(err) : console.log(`Server started, port ${PORT}`);
+});
